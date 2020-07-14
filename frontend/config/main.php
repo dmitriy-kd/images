@@ -9,14 +9,32 @@ $params = array_merge(
 return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log'], //свойство для указания какие компоненты необходимо запустить во время подготовки приложения
+    'language' => 'ru-Ru',//язык приложения
     'controllerNamespace' => 'frontend\controllers',
+    'modules' => [
+        'user' => [
+            'class' => 'frontend\modules\user\Module',
+        ],
+        'post' => [
+            'class' => 'frontend\modules\post\Module',
+        ],
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => '127.0.0.1',
+            'port' => 6379,
+            'database' => 0,
+        ],
+        'feedService' => [
+            'class' => 'frontend\components\FeedService',
+        ],
         'user' => [
-            'identityClass' => 'common\models\User',
+            'identityClass' => 'frontend\models\User',
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
         ],
@@ -33,6 +51,13 @@ return [
                 ],
             ],
         ],
+        'i18n' => [ //internationalization
+            'translations' => [
+                '*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                ],
+            ],
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
@@ -41,6 +66,10 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '/' => 'site/index',
+                'about' => 'site/about',
+                'profile/<nickname:\w+>' => 'user/profile/view',
+                'post/<id:\d+>' => 'post/default/view',
             ],
         ],
         'authClientCollection' => [
@@ -48,8 +77,8 @@ return [
             'clients' => [
                 'google' => [
                     'class' => 'yii\authclient\clients\Google',
-                    'clientId' => 'google_client_id',
-                    'clientSecret' => 'google_client_secret'
+                    'clientId' => '337213829297-17k31b84h8qk8odj0ctq7ijgjvobi3u7.apps.googleusercontent.com',
+                    'clientSecret' => '7Oi7wAdmqnD8fYTKUB69IkDF'
                 ],
                 'facebook' => [
                     'class' => 'yii\authclient\clients\Facebook',
